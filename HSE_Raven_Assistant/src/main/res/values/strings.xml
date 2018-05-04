@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">HSE_Raven_Assistant</string>
+  <string name="weather_key">"b1ee13e86990b96bbb9985405034a165"</string>
 </resources>
