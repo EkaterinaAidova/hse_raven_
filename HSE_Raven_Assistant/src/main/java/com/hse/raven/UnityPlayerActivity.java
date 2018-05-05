@@ -1,7 +1,5 @@
 package com.hse.raven;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.unity3d.player.*;
 import android.app.Activity;
 import android.content.Intent;
@@ -14,14 +12,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class UnityPlayerActivity extends Activity
 {
     protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
-    protected RequestQueue queue;
-    protected ScheduleLoader scheduleLoader= new ScheduleLoader();
+
     // Setup activity layout
     @Override protected void onCreate(Bundle savedInstanceState)
     {
@@ -31,19 +25,6 @@ public class UnityPlayerActivity extends Activity
         mUnityPlayer = new UnityPlayer(this);
         setContentView(mUnityPlayer);
         mUnityPlayer.requestFocus();
-
-        //request
-        Date currentDate = new Date(),
-                fromdate = new Date(),
-                todate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("E");
-        int dayOfWeek = scheduleLoader.getDayOfWeek(dateFormat.format(currentDate));
-        long time = currentDate.getTime();
-        fromdate.setTime(time - (dayOfWeek-1)*24*60*60*60);
-        todate.setTime(time + (6-dayOfWeek)*24*60*60*60);
-        String group = "15ПИ";
-        queue = Volley.newRequestQueue(this);
-        queue.add(scheduleLoader.getScheduleRequest(String.format("%Y.%m.%d",fromdate),String.format("%Y.%m.%d",todate),group));
     }
 
     @Override protected void onNewIntent(Intent intent)
