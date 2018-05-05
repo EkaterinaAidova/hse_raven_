@@ -29,12 +29,12 @@ public class WeatherLoader extends Application{
     String basicUri = "http://api.openweathermap.org/data/2.5/forecast";
     private Map<String, String> params;
     RequestQueue queue;
-    public WeatherLoader() {
+    public WeatherLoader(Context context) {
         params = new HashMap<>(5);
         params.put("id", "520555");
         params.put("units", "metric");
         params.put("lang", "ru");
-        params.put("APPID", getResources().getString(R.string.weather_key));
+        params.put("APPID", context.getResources().getString(R.string.weather_key));
     }
 
     public Request<JSONObject> getForecastRequest(int cityID){
@@ -55,16 +55,12 @@ public class WeatherLoader extends Application{
         });
         return request;
     }
-    public void getForecastRequest(final Context context){
+    public CustomRequest getForecastRequest(){
         CustomRequest request = new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("resonse", response.toString());
-                Toast toast = new Toast(context);
-                toast.makeText(context, response.toString(), Toast.LENGTH_SHORT);
-                toast.show();
-                //Log.i("WORK!!!", response.toString());
             }
         }, new Response.ErrorListener() {
 
@@ -74,7 +70,7 @@ public class WeatherLoader extends Application{
 
             }
         });
-        queue = Volley.newRequestQueue(context);
+        return request;
     }
 }
 
