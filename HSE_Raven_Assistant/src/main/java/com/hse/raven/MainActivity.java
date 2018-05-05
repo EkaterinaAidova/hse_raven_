@@ -35,25 +35,8 @@ public class MainActivity extends Activity {
         mContext = this.getApplicationContext();
         //request
         Date currentDate = new Date();
-        Date fromdate = new Date();
-        Date todate = new Date();
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("E");
-        //int dayOfWeek = scheduleLoader.getDayOfWeek(dateFormat.format(currentDate));
-        Calendar c = Calendar.getInstance();
-        c.setTime(currentDate);
-        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK) -1;
-        if (dayOfWeek == 0){
-            dayOfWeek = 7;
-        }
-        Log.i("day", dayOfWeek.toString());
-        long time = currentDate.getTime();
-        //fromdate.setTime();
-        todate.setTime(fromdate.getTime() + 7*24*60*60*60);
         String group = "15ПИ";
-        SimpleDateFormat dateFormatToRequest = new SimpleDateFormat("yyyy.MM.dd");
-        //queue = new Volley().newRequestQueue(mContext);
-        Log.i("sending", "request sends");
-        scheduleLoader.getScheduleRequest("2018.04.30", "2018.05.05", group, this);
+        scheduleLoader.getScheduleRequest(currentDate, group, this);
        /* Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, "https://www.hse.ru/api/timetable/lessons?fromdate=2018.04.30&todate=2018.05.05&groupoid=6371&receiverType=3", null, new Response.Listener<JSONObject>() {
 
             @Override

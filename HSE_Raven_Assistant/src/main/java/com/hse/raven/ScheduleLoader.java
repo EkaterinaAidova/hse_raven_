@@ -12,6 +12,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -119,10 +122,22 @@ public class ScheduleLoader {
        groupID.put("15М4", "6377");
        params = new LinkedHashMap<>();
     }
-    public void getScheduleRequest(String fromDate, String toDate, String group, final Context context) {
-        //TODO: Prepare to neseccary formats
-        params.put("fromdate", fromDate);
-        params.put("todate", toDate);
+    public void getScheduleRequest(Date date, String group, final Context context) {
+        //Calculating Dates
+        Date fromdate = new Date();
+        Date todate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK) -1;
+        if (dayOfWeek == 0){
+            dayOfWeek = 7;
+        }
+        long time = date.getTime();
+        fromdate.setTime(date.getTime() - (dayOfWeek-1)*24*60*60*1000);
+        todate.setTime(fromdate.getTime() + 5*24*60*60*1000);
+        SimpleDateFormat dateFormatToRequest = new SimpleDateFormat("yyyy.MM.dd");
+        params.put("fromdate", dateFormatToRequest.format(fromdate));
+        params.put("todate", dateFormatToRequest.format(todate));
         params.put("groupoid", groupID.get(group));
         params.put("receiverType", "3");
         CustomRequest request = new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
