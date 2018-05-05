@@ -18,6 +18,27 @@ public class ScheduleLoader {
     private Map<String, String> params;
     private Map<String,String> groupID;
 
+    public int getDayOfWeek(String weekDay){
+        switch(weekDay){
+            case "Пн":
+                return 1;
+            case "Вт":
+                return 2;
+            case "Ср":
+                return 3;
+            case "Чт":
+                return 4;
+            case "Пт":
+                return 5;
+            case "Сб":
+                return 6;
+            case "Вс":
+                return 7;
+                default:
+                    return 0;
+        }
+    }
+
     public ScheduleLoader() {
        groupID = new HashMap<>();
        groupID.put("17ПИ", "6929");
@@ -56,45 +77,45 @@ public class ScheduleLoader {
        groupID.put("14Э1", "6229");
        groupID.put("14Э2", "6230");
        groupID.put("14Э3", "6231");
-       /*         "17Ю1": "6938",
-                "17Ю2": "6939",
-                "17Ю3": "7620",
-                "16Ю1": "6607",
-                "16Ю2": "6559",
-                "16Ю3": "6608",
-                "15Ю1": "6368",
-                "15Ю2": "6369",
-                "14Ю1": "6217",
-                "14Ю2": "6232",
-                "17ФИЛ": "6931",
-                "17ФИЛ2": "7659",
-                "16ФИЛ": "7245",
-                "15ФИЛ": "6373",
-                "14ФИЛ": "7239",
-                "17ФПЛ": "6926",
-                "17ФПЛ2": "7660",
-                "16ФПЛ": "7246",
-                "15ФПЛ": "6372",
-                "14ФПЛ": "7240",
-                "17М1": "6924",
-                "17М2": "6932",
-                "17М3": "6925",
-                "17М4": "7606",
-                "16М1": "6581",
-                "16М2": "6580",
-                "16М3": "6579",
-                "16М4": "6609",
-                "15М1": "6376",
-                "15М2": "6378",
-                "15М3": "6375",
-                "15М4": "6377"*/
+       groupID.put("17Ю1", "6938");
+       groupID.put("17Ю2", "6939");
+       groupID.put("17Ю3", "7620");
+       groupID.put("16Ю1", "6607");
+       groupID.put("16Ю2", "6559");
+       groupID.put("16Ю3", "6608");
+       groupID.put("15Ю1", "6368");
+       groupID.put("15Ю2", "6369");
+       groupID.put("14Ю1", "6217");
+       groupID.put("14Ю2", "6232");
+       groupID.put("17ФИЛ", "6931");
+       groupID.put("17ФИЛ2", "7659");
+       groupID.put("16ФИЛ", "7245");
+       groupID.put("15ФИЛ", "6373");
+       groupID.put("14ФИЛ", "7239");
+       groupID.put("17ФПЛ", "6926");
+       groupID.put("17ФПЛ2", "7660");
+       groupID.put("16ФПЛ", "7246");
+       groupID.put("15ФПЛ", "6372");
+       groupID.put("14ФПЛ", "7240");
+       groupID.put("17М1", "6924");
+       groupID.put("17М2", "6932");
+       groupID.put("17М3", "6925");
+       groupID.put("17М4", "7606");
+       groupID.put("16М1", "6581");
+       groupID.put("16М2", "6580");
+       groupID.put("16М3", "6579");
+       groupID.put("16М4", "6609");
+       groupID.put("15М1", "6376");
+       groupID.put("15М2", "6378");
+       groupID.put("15М3", "6375");
+       groupID.put("15М4", "6377");
        params = new HashMap<>();
     }
     public Request<JSONObject> getScheduleRequest(String fromDate, String toDate, String group){
         //TODO: Prepare to neseccary formats
         params.put("fromdate", fromDate);
         params.put("todate", toDate);
-        params.put("groupid", group);
+        params.put("groupid", groupID.get(group));
 
         CustomRequest request = new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
 
