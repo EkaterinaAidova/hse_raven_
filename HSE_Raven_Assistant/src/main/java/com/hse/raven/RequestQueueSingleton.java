@@ -50,4 +50,8 @@ public class RequestQueueSingleton {
 
         }
 
+        public void stopQueue() {
+            getRequestQueue().stop();
+        }
+
     }
