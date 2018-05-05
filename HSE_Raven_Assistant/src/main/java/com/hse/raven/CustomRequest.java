@@ -12,13 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.security.acl.LastOwnerException;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by cat on 04.05.18.
- */
 
 public class CustomRequest extends Request<JSONObject> {
     private int mMethod;

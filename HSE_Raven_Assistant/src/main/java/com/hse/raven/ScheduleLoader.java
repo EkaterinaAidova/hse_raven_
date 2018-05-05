@@ -1,14 +1,10 @@
 package com.hse.raven;
-
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
@@ -18,10 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-/**
- * Created by cat on 04.05.18.
- */
 
 public class ScheduleLoader {
     RequestQueue queue;
@@ -145,7 +137,6 @@ public class ScheduleLoader {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("resonse", response.toString());
-                //Log.i("WORK!!!", response.toString());
             }
         }, new Response.ErrorListener() {
 
@@ -155,10 +146,7 @@ public class ScheduleLoader {
 
             }
         });
-
-        queue = Volley.newRequestQueue(context);
-        queue.add(request);
-
+        return request;
     }
 
 }
