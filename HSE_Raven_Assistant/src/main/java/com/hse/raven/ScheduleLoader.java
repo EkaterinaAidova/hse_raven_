@@ -1,6 +1,4 @@
 package com.hse.raven;
-
-import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -16,10 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-/**
- * Created by cat on 04.05.18.
- */
 
 public class ScheduleLoader {
     RequestQueue queue;
@@ -153,10 +147,6 @@ public class ScheduleLoader {
             }
         });
         return request;
-
-        //queue = Volley.newRequestQueue(context);
-        //queue.add(request);
-
     }
 
 }
