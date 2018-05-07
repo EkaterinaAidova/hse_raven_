@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">HSE_Raven_Assistant</string>
     <string name="weather_key">"b1ee13e86990b96bbb9985405034a165"</string>
+    <string name="CLIENT_ACCESS_TOKEN">"d4d2a3f70a0c49a5b7deff31bf1afd34"</string>
 </resources>
