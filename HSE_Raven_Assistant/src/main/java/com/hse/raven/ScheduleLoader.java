@@ -114,7 +114,7 @@ public class ScheduleLoader {
        groupID.put("15М4", "6377");
        params = new LinkedHashMap<>();
     }
-    public CustomRequest getScheduleRequest(Date date, String group, final) {
+    public CustomRequest getScheduleRequest(Date date, String group) {
         //Calculating Dates
         Date fromdate = new Date();
         Date todate = new Date();

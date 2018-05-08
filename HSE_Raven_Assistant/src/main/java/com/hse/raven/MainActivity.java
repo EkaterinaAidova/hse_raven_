@@ -2,6 +2,8 @@ package com.hse.raven;
 
 import android.os.Bundle;
 
+import java.util.Date;
+
 public class MainActivity extends UnityPlayerActivity {
 
     protected RequestQueueSingleton rq;
@@ -10,7 +12,7 @@ public class MainActivity extends UnityPlayerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rq = RequestQueueSingleton.getInstance(this);
-        rq.loadSchedule("2018.04.30", "2018.05.06", "15ПИ");
+        rq.loadSchedule(new Date(),"15ПИ");
         rq.stopQueue();
     }
 }
