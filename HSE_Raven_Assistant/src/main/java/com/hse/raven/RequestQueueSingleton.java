@@ -6,6 +6,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import java.util.Date;
+
 public class RequestQueueSingleton {
         private static RequestQueueSingleton mInstance;
         private RequestQueue mRequestQueue;
@@ -39,8 +41,8 @@ public class RequestQueueSingleton {
             getRequestQueue().add(req);
         }
 //TODO: change signature
-        public void loadSchedule(String fromdate, String todate, String group){
-            CustomRequest request = mScheduleLoader.getScheduleRequest(fromdate, todate, group);
+        public void loadSchedule(Date date, String group){
+            CustomRequest request = mScheduleLoader.getScheduleRequest(date, group);
             addToRequestQueue(request);
         }
 

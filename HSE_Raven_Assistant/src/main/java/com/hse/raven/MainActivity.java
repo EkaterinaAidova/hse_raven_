@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import ai.api.AIListener;
@@ -24,11 +25,12 @@ public class MainActivity extends UnityPlayerActivity implements AIListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rq = RequestQueueSingleton.getInstance(this);
-        rq.loadSchedule("2018.04.30", "2018.05.06", "15ПИ");
+        rq.loadSchedule(new Date(),"15ПИ");
         rq.stopQueue();
+        String aitoken = getResources().getString(R.string.CLIENT_ACCESS_TOKEN);
 
         //AIConfiguration
-        final AIConfiguration config = new AIConfiguration(this.getResources().getString(R.string.CLIENT_ACCESS_TOKEN),
+        final AIConfiguration config = new AIConfiguration(aitoken,
                 AIConfiguration.SupportedLanguages.Russian,
                 AIConfiguration.RecognitionEngine.System);
         aiService = AIService.getService(this, config);
