@@ -1,26 +1,36 @@
 package com.hse.raven;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Entity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
+
+import com.google.gson.JsonElement;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import ai.api.AIListener;
 import ai.api.*;
 import ai.api.android.AIConfiguration;
 import ai.api.android.AIService;
 import ai.api.model.EntityEntry;
+import ai.api.model.Result;
 
 import static android.content.ContentValues.TAG;
 
-public class MainActivity extends UnityPlayerActivity implements AIListener {
+public class MainActivity extends UnityPlayerActivity implements AIListener,View.OnTouchListener {
 
     protected RequestQueueSingleton rq;
     protected AIService aiService;
+    protected TextView tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,28 +38,54 @@ public class MainActivity extends UnityPlayerActivity implements AIListener {
        // rq.loadSchedule(new Date(),"15ПИ");
        // rq.stopQueue();
         String aitoken = getResources().getString(R.string.CLIENT_ACCESS_TOKEN);
-
         //AIConfiguration
         final AIConfiguration config = new AIConfiguration(aitoken,
                 AIConfiguration.SupportedLanguages.Russian,
                 AIConfiguration.RecognitionEngine.System);
         aiService = AIService.getService(this, config);
         aiService.setListener(this);
-        //Entity hseGroups = new Entity("Groups");
-        //hseGroups.addEntry(new EntityEntry("15ПИ", new String[] {"пятнадцать п и", "пятнадцать пи"}));
-        //hseGroups.addEntry(new EntityEntry("15ПМИ", new String[] {"пятнадцать пэ мэ и","пятнадцать П М И"}));
-        //final List<Entity> entities = Collections.singletonList(hseGroups);
-        //RequestExtras requestExtras = new RequestExtras(null,entities);
-        aiService.startListening();
+        // set OnTouchListener
+        //View view = super.getWindow().getDecorView().getRootView();
+        //view.setOnTouchListener(this);
+        tv = new TextView(this);
+        tv.setOnTouchListener(this);
+        setContentView(tv);
+    }
+
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: // нажатие
+                aiService.startListening();
+                break;
+            case MotionEvent.ACTION_UP: // отпускание
+                aiService.stopListening();
+                break;
+                default:
+                    break;
+        }
+        return true;
     }
 
     @Override
-    public void onResult(ai.api.model.AIResponse result) {
-        Log.i(TAG, "Result: " + result.getResult() );
+    public void onResult(ai.api.model.AIResponse response) {
+        Result result = response.getResult();
+
+        Log.d("assistant",result.toString());
+        StringBuilder parameterString = new StringBuilder();
+        if (result.getParameters() != null && !result.getParameters().isEmpty()) {
+            for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
+                parameterString.append("(" + entry.getKey() + ", " + entry.getValue() + ") ");
+                makeRequest(entry.getValue().toString());
+            }
+        }
+        //tv.setText(parameterString.toString()); // for debug
     }
 
     @Override
     public void onError(ai.api.model.AIError error) {
+        System.out.println("assistant: "+ error.getMessage());
         Log.e("assistant", error.getMessage());
 
     }
@@ -74,5 +110,15 @@ public class MainActivity extends UnityPlayerActivity implements AIListener {
     @Override
     public void onListeningFinished() {
         Log.i("assistant","Listening finished");
+    }
+
+    protected void makeRequest(String group){
+        group = group.replaceAll(" ", "");
+        for (int i = 2; i<group.length();i++) {
+            group = group.replace(group.charAt(i), Character.toUpperCase(group.charAt(i)));
+        }
+        //System.out.println(group); // for debug
+        rq.loadSchedule(new Date(),group);
+        rq.stopQueue();
     }
 }
