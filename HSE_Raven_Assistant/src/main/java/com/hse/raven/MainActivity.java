@@ -25,8 +25,8 @@ public class MainActivity extends UnityPlayerActivity implements AIListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rq = RequestQueueSingleton.getInstance(this);
-        rq.loadSchedule(new Date(),"15ПИ");
-        rq.stopQueue();
+       // rq.loadSchedule(new Date(),"15ПИ");
+       // rq.stopQueue();
         String aitoken = getResources().getString(R.string.CLIENT_ACCESS_TOKEN);
 
         //AIConfiguration
@@ -50,6 +50,7 @@ public class MainActivity extends UnityPlayerActivity implements AIListener {
 
     @Override
     public void onError(ai.api.model.AIError error) {
+        Log.e("assistant", error.getMessage());
 
     }
 
@@ -60,16 +61,18 @@ public class MainActivity extends UnityPlayerActivity implements AIListener {
 
     @Override
     public void onListeningStarted() {
+        Log.i("assistant","Listening started");
 
     }
 
     @Override
     public void onListeningCanceled() {
 
+        Log.i("assistant","Listening canseled");
     }
 
     @Override
     public void onListeningFinished() {
-
+        Log.i("assistant","Listening finished");
     }
 }
