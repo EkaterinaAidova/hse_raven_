@@ -45,11 +45,11 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
         aiService = AIService.getService(this, config);
         aiService.setListener(this);
         // set OnTouchListener
-        //View view = super.getWindow().getDecorView().getRootView();
-        //view.setOnTouchListener(this);
-        tv = new TextView(this);
-        tv.setOnTouchListener(this);
-        setContentView(tv);
+        View view = mUnityPlayer.getView();
+        view.setOnTouchListener(this);
+        //tv = new TextView(this); // for debug
+        //tv.setOnTouchListener(this); // for debug
+        //setContentView(tv);
     }
 
 
@@ -114,9 +114,9 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
 
     protected void makeRequest(String group){
         group = group.replaceAll(" ", "");
-        for (int i = 2; i<group.length();i++) {
-            group = group.replace(group.charAt(i), Character.toUpperCase(group.charAt(i)));
-        }
+        group = group.replaceAll("\\[|\\]", "");
+        group = group.replaceAll("\"", "");
+        group = group.toUpperCase();
         //System.out.println(group); // for debug
         rq.loadSchedule(new Date(),group);
         rq.stopQueue();
