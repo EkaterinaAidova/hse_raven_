@@ -1,16 +1,22 @@
 package com.hse.raven;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.JsonElement;
 import com.unity3d.player.UnityPlayer;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import ai.api.AIListener;
@@ -23,6 +29,7 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     protected RequestQueueSingleton rq;
     protected AIService aiService;
     SharedPreferences prefs;
+
     Context appContext;
     //protected TextView tv;
     @Override
@@ -40,7 +47,9 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
                 AIConfiguration.RecognitionEngine.System);
         aiService = AIService.getService(this, config);
         aiService.setListener(this);
+
     }
+
 
 
     @Override
@@ -72,6 +81,7 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     public void onResult(ai.api.model.AIResponse response) {
         Result result = response.getResult();
 
+
         Log.d("assistant",result.toString());
         StringBuilder parameterString = new StringBuilder();
         if (result.getParameters() != null && !result.getParameters().isEmpty()) {
@@ -80,7 +90,6 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
                 makeRequest(entry.getValue().toString());
             }
         }
-        //tv.setText(parameterString.toString()); // for debug
     }
 
     @Override

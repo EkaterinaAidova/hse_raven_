@@ -20,7 +20,7 @@ public class RequestQueueSingleton {
             mCtx = context;
             mRequestQueue = getRequestQueue();
             mWeatherLoader = new WeatherLoader(context);
-            mScheduleLoader = new ScheduleLoader();
+            mScheduleLoader = new ScheduleLoader(context);
         }
 
         public static synchronized RequestQueueSingleton getInstance(Context context) {
@@ -40,7 +40,7 @@ public class RequestQueueSingleton {
         public <T> void addToRequestQueue(Request<T> req) {
             getRequestQueue().add(req);
         }
-//TODO: change signature
+
         public void loadSchedule(Date date, String group){
             CustomRequest request = mScheduleLoader.getScheduleRequest(date, group);
             addToRequestQueue(request);
