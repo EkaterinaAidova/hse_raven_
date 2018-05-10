@@ -16,7 +16,6 @@ public class RequestQueueSingleton {
         private ScheduleLoader mScheduleLoader;
         private static Context mCtx;
 
-
         private RequestQueueSingleton(Context context) {
             mCtx = context;
             mRequestQueue = getRequestQueue();
@@ -44,6 +43,7 @@ public class RequestQueueSingleton {
 
         public void loadSchedule(Date date, String group){
             CustomRequest request = mScheduleLoader.getScheduleRequest(date, group);
+            // check request to null
             addToRequestQueue(request);
         }
 

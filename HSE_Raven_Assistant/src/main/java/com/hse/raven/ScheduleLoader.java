@@ -124,34 +124,30 @@ public class ScheduleLoader {
             calcDates(date);
             params.put("groupoid", groupID.get(group));
             params.put("receiverType", "3");
-
-            return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    //Log.i("resonse", response.toString())
-                    try {
-                        ScheduleModel schedule = parseResponse(response, getDayOfWeek(date));
-                        speaker.speak(schedule.toString());
-                    } catch (JSONException e) {
-                        //  e.printStackTrace();
-                        speaker.speak("это слишком сложно, посмотри на сайте сам");
-                    }
-
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("error", error.toString()); // TODO: Handle error
-                    speaker.speak("Ой-ой. Что-то пошло не так!");
-                }
-            });
         } catch (NoSuchElementException exp) {
             speaker.speak("нет такой группы: " + exp.getMessage() + ". Повтори пожалуйста");
         }
-        finally{
-            return null;
-        }
+        return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Log.i("resonse", response.toString())
+                try {
+                    ScheduleModel schedule = parseResponse(response, getDayOfWeek(date));
+                    speaker.speak(schedule.toString());
+                } catch (JSONException e) {
+                    //  e.printStackTrace();
+                    speaker.speak("это слишком сложно, посмотри на сайте сам");
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("error", error.toString()); // TODO: Handle error
+                speaker.speak("Ой-ой. Что-то пошло не так!");
+            }
+        });
     }
 
     private void calcDates(Date today){

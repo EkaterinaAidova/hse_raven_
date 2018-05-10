@@ -70,7 +70,7 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: //
                 appContext = UnityPlayer.currentActivity.getApplicationContext();
-//PlayerPrefs: unity uses package name for preferences file ("com.example.app")
+    //PlayerPrefs: unity uses package name for preferences file ("com.example.app")
                 prefs = appContext.getSharedPreferences(appContext.getPackageName(), Context.MODE_PRIVATE);// нажатие
                 Map<String, ?>pr = prefs.getAll();
                 Log.i("unityprefs", pr.toString());
