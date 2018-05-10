@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.gson.JsonElement;
 import com.unity3d.player.UnityPlayer;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,6 +34,18 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     private TextSpeaker speaker;
     Context appContext;
     //protected TextView tv;
+
+    private int getDayOfWeek(Date date){
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK) -1;
+        if (dayOfWeek == 0){
+            dayOfWeek = 7;
+        }
+
+        return dayOfWeek;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,27 +100,21 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
         {
             case "get_group":
                 StringBuilder parameterString = new StringBuilder();
+                StringBuilder group = new StringBuilder();
+                StringBuilder date = new StringBuilder();
                 if (result.getParameters() != null && !result.getParameters().isEmpty()) {
-                    StringBuilder group = null;
-                    StringBuilder date = null;
                     for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
                         parameterString.append("(" + entry.getKey() + ", " + entry.getValue() + ") "); // for debug
-                        System.out.println(entry.getKey());
-                        if (entry.getKey() == "date") {
-                            Log.d("parameters", "initializing group");
-                            group = new StringBuilder("");
+                        if ("date".equals(entry.getKey().toString())) {
                             date.append(entry.getValue().toString());
                         } else
-                        if (entry.getKey() == "group") {
-                            Log.d("parameters", "initializing date");
-                            date = new StringBuilder("");
+                        if ("group".equals(entry.getKey().toString())) {
                             group.append(entry.getValue().toString());
                         }
                     }
-                    Log.d("parameters", parameterString.toString());
-                    Log.d("parameters", group.toString() + "\n" + date.toString());
+                    Log.d("parameters", date.toString()); // for debug
                     if (group != null && !group.toString().isEmpty()) {
-                        if (date == null || date.toString().isEmpty())
+                        if (date == null || date.toString().isEmpty() || "[]".equals(date.toString()))
                             makeRequest(group.toString(), new Date());
                         else
                             makeRequest(group.toString(), result.getDateParameter("date"));
@@ -166,12 +173,19 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     }
 
     protected void makeRequest(String group, Date date ){
-        group = group.replaceAll(" ", "");
-        group = group.replaceAll("\\[|\\]", "");
-        group = group.replaceAll("\"", "");
-        group = group.toUpperCase();
-        Log.d("date", date.toString());// for debug
-        Log.d("group", group);// for debug
-        rq.loadSchedule(date ,group);
+        try {
+            if (getDayOfWeek(date) == 7)
+                throw new NoSuchElementException();
+            group = group.replaceAll(" ", "");
+            group = group.replaceAll("\\[|\\]", "");
+            group = group.replaceAll("\"", "");
+            group = group.toUpperCase();
+            Log.d("date", date.toString());// for debug
+            Log.d("group", group);// for debug
+            rq.loadSchedule(date, group);
+        }
+        catch(NoSuchElementException exp){
+            speaker.speak("воскресенье выходной");
+        }
     }
 }

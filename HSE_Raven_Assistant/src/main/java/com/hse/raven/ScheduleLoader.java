@@ -113,6 +113,7 @@ public class ScheduleLoader {
        groupID.put("15М4", "6377");
        params = new LinkedHashMap<>();
     }
+
     public CustomRequest getScheduleRequest(final Date date, String group) {
         try {
             String gr = groupID.get(group);
@@ -120,21 +121,11 @@ public class ScheduleLoader {
             if (gr == null) {
                 throw new NoSuchElementException(group);
             }
-            if (getDayOfWeek(date) == 7) {
-                throw new IllegalArgumentException(date.toString());
-            }
             calcDates(date);
             params.put("groupoid", groupID.get(group));
             params.put("receiverType", "3");
-        }
-        catch(NoSuchElementException exp) {
-            speaker.speak("нет такой группы: " + exp.getMessage() + ". Повтори пожалуйста");
-        }
-        catch (IllegalArgumentException exp){
-            speaker.speak("воскресенье выходной");
-        }
-            return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
 
+            return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     //Log.i("resonse", response.toString())
@@ -155,6 +146,12 @@ public class ScheduleLoader {
                     speaker.speak("Ой-ой. Что-то пошло не так!");
                 }
             });
+        } catch (NoSuchElementException exp) {
+            speaker.speak("нет такой группы: " + exp.getMessage() + ". Повтори пожалуйста");
+        }
+        finally{
+            return null;
+        }
     }
 
     private void calcDates(Date today){
