@@ -7,6 +7,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 public class RequestQueueSingleton {
         private static RequestQueueSingleton mInstance;

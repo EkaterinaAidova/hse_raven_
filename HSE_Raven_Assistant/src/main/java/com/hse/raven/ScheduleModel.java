@@ -10,7 +10,7 @@ public class ScheduleModel {
 
 
     public ScheduleModel(int dayOftheWeek, ArrayList<Lesson> lessons) {
-        this.dayOftheWeek = days[dayOftheWeek];
+        this.dayOftheWeek = days[dayOftheWeek-1];
         this.lessons = lessons;
     }
 
@@ -34,9 +34,9 @@ public class ScheduleModel {
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
-        output.append(dayOftheWeek);
-        if (lessons.isEmpty()){
-            output.append("занятий нет");
+        output.append(dayOftheWeek + ". ");
+        if (lessons.isEmpty() || lessons == null){
+            output.append(" занятий нет");
             return output.toString();
         }
         for (Lesson lesson : lessons) {

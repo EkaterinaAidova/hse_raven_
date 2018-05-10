@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.zip.DataFormatException;
 
 public class ScheduleLoader {
     RequestQueue queue;
@@ -112,35 +114,47 @@ public class ScheduleLoader {
        params = new LinkedHashMap<>();
     }
     public CustomRequest getScheduleRequest(final Date date, String group) {
-        String gr = groupID.get(group);
-        //TODO обработка ошибок
-        if (gr == null) {
-            throw new NoSuchElementException(group);
+        try {
+            String gr = groupID.get(group);
+            //TODO обработка ошибок
+            if (gr == null) {
+                throw new NoSuchElementException(group);
+            }
+            if (getDayOfWeek(date) == 7) {
+                throw new IllegalArgumentException(date.toString());
+            }
+            calcDates(date);
+            params.put("groupoid", groupID.get(group));
+            params.put("receiverType", "3");
         }
-        calcDates(date);
-        params.put("groupoid", groupID.get(group));
-        params.put("receiverType", "3");
-        return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
+        catch(NoSuchElementException exp) {
+            speaker.speak("нет такой группы: " + exp.getMessage() + ". Повтори пожалуйста");
+        }
+        catch (IllegalArgumentException exp){
+            speaker.speak("воскресенье выходной");
+        }
+            return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
 
-            @Override
-            public void onResponse(JSONObject response) {
-                //Log.i("resonse", response.toString())
-                try {
-                    ScheduleModel schedule = parseResponse(response, getDayOfWeek(date));
-                    speaker.speak(schedule.toString());
-                } catch (JSONException e) {
-                  //  e.printStackTrace();
+                @Override
+                public void onResponse(JSONObject response) {
+                    //Log.i("resonse", response.toString())
+                    try {
+                        ScheduleModel schedule = parseResponse(response, getDayOfWeek(date));
+                        speaker.speak(schedule.toString());
+                    } catch (JSONException e) {
+                        //  e.printStackTrace();
+                        speaker.speak("это слишком сложно, посмотри на сайте сам");
+                    }
+
                 }
+            }, new Response.ErrorListener() {
 
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-               Log.e("error", error.toString()); // TODO: Handle error
-
-            }
-        });
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("error", error.toString()); // TODO: Handle error
+                    speaker.speak("Ой-ой. Что-то пошло не так!");
+                }
+            });
     }
 
     private void calcDates(Date today){
