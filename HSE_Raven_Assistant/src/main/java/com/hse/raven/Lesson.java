@@ -13,7 +13,7 @@ public class Lesson {
 
     @Override
     public String toString() {
-        return "В "+ getStartLesson() + " "+ getDiscipline()+ " в корпусе "+ getPlace()+" аудитория "+ getAuditorium()+ " преподаватель "+ getLecturer();
+        return "В "+ getStartLesson() + " "+ getDiscipline()+ " в корпусе "+ getPlace()+" аудитория ."+ getAuditorium()+ ". "+ getLecturer() + "; ";
     }
 
     public Lesson(String discipline, String auditorium, String place, String startLesson, String lecturer) {
@@ -21,6 +21,7 @@ public class Lesson {
         lecturerTitle.put("ст.преп.", "старший преподаватель");
         lecturerTitle.put("проф.", "профессор");
         lecturerTitle.put("доц.","доцент");
+        lecturerTitle.put("преп.", "преподаватель ");
         this.setDiscipline(discipline);
         this.setAuditorium(auditorium);
         this.setPlace(place);
@@ -49,8 +50,8 @@ public class Lesson {
     }
 
     public void setDiscipline(String discipline) {
-        discipline.replace("(рус)", " ");
-        discipline.replace("(анг)", " на английском языке ");
+        discipline = discipline.replace("(рус)", " ");
+        discipline = discipline.replace("(анг)", "на английском языке");
         this.discipline = discipline;
     }
 
@@ -59,8 +60,23 @@ public class Lesson {
     }
 
     public void setPlace(String place) {
-        place.replace("H.H.,", "");
-        place.replace(',', ' ');
+        //place.replace("H.H.,", "");
+        //place.replace(',', ' ');
+        switch(place)
+        {
+            case "Н.Н., Б. Печерская, 25/12":
+                place = "улица Большая Печёрская дом 25 дробь 12.";
+                break;
+            case "Н.Н., Львовская, 1в":
+                place = "улица Львовская дом 1в.";
+                break;
+            case "Н.Н., Сормовское ш., 30":
+                place = "Сормовское шоссе дом 30.";
+                break;
+            case "Н.Н., Родионова 136":
+                place = "улица Родионова дом 136.";
+                break;
+        }
         this.place = place;
     }
 
@@ -73,13 +89,12 @@ public class Lesson {
         String[] split = lecturer.split(" ");
         String title = lecturerTitle.get(split[0]);
         split[0] = title;
-        String lect = new String();
-
+        StringBuilder lect = new StringBuilder();
         for (String word:
              split) {
-            lect.concat(word);
-            lect.concat(" ");
+            lect.append(word);
+            lect.append(" ");
         }
-        this.lecturer = lect;
+        this.lecturer = lect.toString();
     }
 }

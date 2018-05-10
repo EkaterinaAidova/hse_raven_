@@ -162,7 +162,7 @@ public class ScheduleLoader {
         ArrayList<Lesson> lsns = new ArrayList<>();
         for(int i=0; i< count; i++){
             JSONObject lesson = lessons.getJSONObject(i);
-            if(lesson.getInt("dayOfWeek") == dayOfweek - 1)
+            if(lesson.getInt("dayOfWeek") == dayOfweek)
             {
                 String discipline = lesson.getString("discipline");
                 String beginLesson = lesson.getString("beginLesson");
@@ -172,7 +172,7 @@ public class ScheduleLoader {
                 lsns.add(new Lesson(discipline, auditorium, campus,beginLesson,lecturer));
             }
         }
-        return new ScheduleModel(dayOfweek-1 , lsns);
+        return new ScheduleModel(dayOfweek , lsns);
 
         }
 
