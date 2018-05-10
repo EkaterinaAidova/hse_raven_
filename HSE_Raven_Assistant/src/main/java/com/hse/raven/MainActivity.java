@@ -1,26 +1,15 @@
 package com.hse.raven;
 
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
-
 import com.google.gson.JsonElement;
-import com.unity3d.player.UnityPlayer;
-
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
 import ai.api.AIListener;
 import ai.api.android.AIConfiguration;
 import ai.api.android.AIService;
@@ -32,8 +21,6 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     protected AIService aiService;
     SharedPreferences prefs;
     private TextSpeaker speaker;
-    Context appContext;
-    //protected TextView tv;
 
     private int getDayOfWeek(Date date){
         Calendar c = Calendar.getInstance();
@@ -49,14 +36,10 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        appContext = UnityPlayer.currentActivity.getApplicationContext();
-        speaker = TextSpeaker.getInstance(appContext);
-//PlayerPrefs: unity uses package name for preferences file ("com.example.app")
-        prefs = appContext.getSharedPreferences(appContext.getPackageName(), Context.MODE_PRIVATE);
+        speaker = TextSpeaker.getInstance(this);
         rq = RequestQueueSingleton.getInstance(this);
         mUnityPlayer.getView().setOnTouchListener(this);
         String aitoken = getResources().getString(R.string.CLIENT_ACCESS_TOKEN);
-        //AIConfiguration
         final AIConfiguration config = new AIConfiguration(aitoken,
                 AIConfiguration.SupportedLanguages.Russian,
                 AIConfiguration.RecognitionEngine.System);
@@ -68,20 +51,10 @@ public class MainActivity extends UnityPlayerActivity implements AIListener,View
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: //
-                appContext = UnityPlayer.currentActivity.getApplicationContext();
-    //PlayerPrefs: unity uses package name for preferences file ("com.example.app")
-                prefs = appContext.getSharedPreferences(appContext.getPackageName(), Context.MODE_PRIVATE);// нажатие
-                Map<String, ?>pr = prefs.getAll();
-                Log.i("unityprefs", pr.toString());
-              /*  if() {
-                    Boolean onRaven = mUnityPlayer.getSettings().getBoolean("onRaven");
-                    if (onRaven) {*/
-                        aiService.startListening();
-                    /*}
-                }*/
+            case MotionEvent.ACTION_DOWN:
+                aiService.startListening();
                 break;
-            case MotionEvent.ACTION_UP: // отпускание
+            case MotionEvent.ACTION_UP:
                 aiService.stopListening();
                 break;
                 default:

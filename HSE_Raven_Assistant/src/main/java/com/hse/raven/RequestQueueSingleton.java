@@ -5,9 +5,8 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-
 import java.util.Date;
-import java.util.NoSuchElementException;
+
 
 public class RequestQueueSingleton {
         private static RequestQueueSingleton mInstance;
@@ -43,7 +42,6 @@ public class RequestQueueSingleton {
 
         public void loadSchedule(Date date, String group){
             CustomRequest request = mScheduleLoader.getScheduleRequest(date, group);
-            // check request to null
             addToRequestQueue(request);
         }
 

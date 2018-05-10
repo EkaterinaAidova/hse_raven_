@@ -1,13 +1,11 @@
 package com.hse.raven;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ScheduleModel {
     private String dayOftheWeek;
     private ArrayList<Lesson> lessons;
-    private String[] days = {"Понедельник",  "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
-
+    private final String[] days = {"Понедельник",  "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
 
     public ScheduleModel(int dayOftheWeek, ArrayList<Lesson> lessons) {
         this.dayOftheWeek = days[dayOftheWeek-1];

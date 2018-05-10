@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,11 +17,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.zip.DataFormatException;
 
 public class ScheduleLoader {
     RequestQueue queue;
-    String basicUri = "https://www.hse.ru/api/timetable/lessons";
     private Map<String, String> params;
     private Map<String,String> groupID;
     private TextSpeaker speaker;
@@ -42,6 +39,7 @@ public class ScheduleLoader {
     public ScheduleLoader(Context context) {
         mCntx = context;
         speaker = TextSpeaker.getInstance(context);
+        mCntx.getResources().getValue();
        groupID = new HashMap<>();
        groupID.put("17ПИ", "6929");
        groupID.put("16ПИ", "7290");
@@ -117,7 +115,6 @@ public class ScheduleLoader {
     public CustomRequest getScheduleRequest(final Date date, String group) {
         try {
             String gr = groupID.get(group);
-            //TODO обработка ошибок
             if (gr == null) {
                 throw new NoSuchElementException(group);
             }
@@ -127,15 +124,13 @@ public class ScheduleLoader {
         } catch (NoSuchElementException exp) {
             speaker.speak("нет такой группы: " + exp.getMessage() + ". Повтори пожалуйста");
         }
-        return new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
+        return new CustomRequest(Request.Method.GET, mCntx.getResources().getString(R.string.hse_url), params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                //Log.i("resonse", response.toString())
                 try {
                     ScheduleModel schedule = parseResponse(response, getDayOfWeek(date));
                     speaker.speak(schedule.toString());
                 } catch (JSONException e) {
-                    //  e.printStackTrace();
                     speaker.speak("это слишком сложно, посмотри на сайте сам");
                 }
 
@@ -144,14 +139,13 @@ public class ScheduleLoader {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("error", error.toString()); // TODO: Handle error
+                Log.e("error", error.toString());
                 speaker.speak("Ой-ой. Что-то пошло не так!");
             }
         });
     }
 
     private void calcDates(Date today){
-        //Calculating Dates
         Date fromdate = new Date();
         Date todate = new Date();
         int dayOfWeek = getDayOfWeek(today);
@@ -180,8 +174,6 @@ public class ScheduleLoader {
             }
         }
         return new ScheduleModel(dayOfweek , lsns);
-
-        }
-
     }
+}
 

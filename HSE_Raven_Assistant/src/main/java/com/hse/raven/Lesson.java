@@ -60,8 +60,6 @@ public class Lesson {
     }
 
     public void setPlace(String place) {
-        //place.replace("H.H.,", "");
-        //place.replace(',', ' ');
         switch(place)
         {
             case "Н.Н., Б. Печерская, 25/12":
