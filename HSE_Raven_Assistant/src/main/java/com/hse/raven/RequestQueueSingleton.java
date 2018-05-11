@@ -5,20 +5,19 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import java.util.Date;
+
 
 public class RequestQueueSingleton {
         private static RequestQueueSingleton mInstance;
         private RequestQueue mRequestQueue;
-        private WeatherLoader mWeatherLoader;
         private ScheduleLoader mScheduleLoader;
         private static Context mCtx;
-
 
         private RequestQueueSingleton(Context context) {
             mCtx = context;
             mRequestQueue = getRequestQueue();
-            mWeatherLoader = new WeatherLoader(context);
-            mScheduleLoader = new ScheduleLoader();
+            mScheduleLoader = new ScheduleLoader(context);
         }
 
         public static synchronized RequestQueueSingleton getInstance(Context context) {
@@ -38,17 +37,12 @@ public class RequestQueueSingleton {
         public <T> void addToRequestQueue(Request<T> req) {
             getRequestQueue().add(req);
         }
-//TODO: change signature
-        public void loadSchedule(String fromdate, String todate, String group){
-            CustomRequest request = mScheduleLoader.getScheduleRequest(fromdate, todate, group);
+
+        public void loadSchedule(Date date, String group){
+            CustomRequest request = mScheduleLoader.getScheduleRequest(date, group);
             addToRequestQueue(request);
         }
 
-        public void loadForecast(){
-            CustomRequest request = mWeatherLoader.getForecastRequest();
-            addToRequestQueue(request);
-
-        }
 
         public void stopQueue() {
             getRequestQueue().stop();

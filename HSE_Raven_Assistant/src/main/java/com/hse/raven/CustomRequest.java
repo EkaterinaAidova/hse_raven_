@@ -7,10 +7,8 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +33,6 @@ public class CustomRequest extends Request<JSONObject> {
 
     @Override
     public String getUrl() {
-        Log.i("method", "get url");
         if(mMethod == Request.Method.GET) {
             if(mParams != null) {
                 StringBuilder stringBuilder = new StringBuilder(mUrl);
@@ -48,19 +45,17 @@ public class CustomRequest extends Request<JSONObject> {
                     } else {
                         stringBuilder.append("&" + entry.getKey() + "=" + entry.getValue());
                     }
-                    iterator.remove(); // avoids a ConcurrentModificationException
+                    iterator.remove();
                     i++;
                 }
                 mUrl = stringBuilder.toString();
             }
         }
-        Log.i("url", mUrl);
         return mUrl;
     }
 
     @Override
-    protected Map<String, String> getParams()
-            throws com.android.volley.AuthFailureError {
+    protected Map<String, String> getParams() {
         return mParams;
     };
 
@@ -81,7 +76,6 @@ public class CustomRequest extends Request<JSONObject> {
 
     @Override
     protected void deliverResponse(JSONObject response) {
-        // TODO Auto-generated method stub
         mListener.onResponse(response);
     }
 }

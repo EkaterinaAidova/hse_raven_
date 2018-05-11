@@ -1,48 +1,44 @@
 package com.hse.raven;
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class ScheduleLoader {
     RequestQueue queue;
-    String basicUri = "https://www.hse.ru/api/timetable/lessons";
     private Map<String, String> params;
     private Map<String,String> groupID;
+    private TextSpeaker speaker;
+    private Context mCntx;
 
-    public int getDayOfWeek(String weekDay){
-        switch(weekDay){
-            case "Пн":
-                return 1;
-            case "Вт":
-                return 2;
-            case "Ср":
-                return 3;
-            case "Чт":
-                return 4;
-            case "Пт":
-                return 5;
-            case "Сб":
-                return 6;
-            case "Вс":
-                return 7;
-                default:
-                    return 0;
+    private int getDayOfWeek(Date date){
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK) -1;
+        if (dayOfWeek == 0){
+            dayOfWeek = 7;
         }
+
+        return dayOfWeek;
     }
 
-    public ScheduleLoader() {
+    public ScheduleLoader(Context context) {
+        mCntx = context;
+        speaker = TextSpeaker.getInstance(context);
        groupID = new HashMap<>();
        groupID.put("17ПИ", "6929");
        groupID.put("16ПИ", "7290");
@@ -114,39 +110,69 @@ public class ScheduleLoader {
        groupID.put("15М4", "6377");
        params = new LinkedHashMap<>();
     }
-    public CustomRequest getScheduleRequest(Date date, String group, final) {
-        //Calculating Dates
-        Date fromdate = new Date();
-        Date todate = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK) -1;
-        if (dayOfWeek == 0){
-            dayOfWeek = 7;
-        }
-        long time = date.getTime();
-        fromdate.setTime(date.getTime() - (dayOfWeek-1)*24*60*60*1000);
-        todate.setTime(fromdate.getTime() + 5*24*60*60*1000);
-        SimpleDateFormat dateFormatToRequest = new SimpleDateFormat("yyyy.MM.dd");
-        params.put("fromdate", dateFormatToRequest.format(fromdate));
-        params.put("todate", dateFormatToRequest.format(todate));
-        params.put("groupoid", groupID.get(group));
-        params.put("receiverType", "3");
-        CustomRequest request = new CustomRequest(Request.Method.GET, basicUri, params, new Response.Listener<JSONObject>() {
 
+    public CustomRequest getScheduleRequest(final Date date, String group) {
+        try {
+            String gr = groupID.get(group);
+            if (gr == null) {
+                throw new NoSuchElementException(group);
+            }
+            calcDates(date);
+            params.put("groupoid", groupID.get(group));
+            params.put("receiverType", "3");
+        } catch (NoSuchElementException exp) {
+            speaker.speak("нет такой группы: " + exp.getMessage() + ". Повтори пожалуйста");
+        }
+        return new CustomRequest(Request.Method.GET, mCntx.getResources().getString(R.string.hse_url), params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i("resonse", response.toString());
+                try {
+                    ScheduleModel schedule = parseResponse(response, getDayOfWeek(date));
+                    speaker.speak(schedule.toString());
+                } catch (JSONException e) {
+                    speaker.speak("это слишком сложно, посмотри на сайте сам");
+                }
+
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-               Log.e("error", error.toString()); // TODO: Handle error
-
+                Log.e("error", error.toString());
+                speaker.speak("Ой-ой. Что-то пошло не так!");
             }
         });
-        return request;
     }
 
+    private void calcDates(Date today){
+        Date fromdate = new Date();
+        Date todate = new Date();
+        int dayOfWeek = getDayOfWeek(today);
+        long time = today.getTime();
+        fromdate.setTime(today.getTime() - (dayOfWeek-1)*24*60*60*1000);
+        todate.setTime(fromdate.getTime() + 5*24*60*60*1000);
+        SimpleDateFormat dateFormatToRequest = new SimpleDateFormat("yyyy.MM.dd");
+        params.put("fromdate", dateFormatToRequest.format(fromdate));
+        params.put("todate", dateFormatToRequest.format(todate));
+    }
+
+    private ScheduleModel parseResponse(JSONObject response, int dayOfweek) throws JSONException {
+        JSONArray lessons = response.getJSONArray("Lessons");
+        int count = response.getInt("Count");
+        ArrayList<Lesson> lsns = new ArrayList<>();
+        for(int i=0; i< count; i++){
+            JSONObject lesson = lessons.getJSONObject(i);
+            if(lesson.getInt("dayOfWeek") == dayOfweek)
+            {
+                String discipline = lesson.getString("discipline");
+                String beginLesson = lesson.getString("beginLesson");
+                String auditorium = lesson.getString("auditorium");
+                String lecturer = lesson.getString("lecturer");
+                String campus  = lesson.getString("building");
+                lsns.add(new Lesson(discipline, auditorium, campus,beginLesson,lecturer));
+            }
+        }
+        return new ScheduleModel(dayOfweek , lsns);
+    }
 }
+
