@@ -11,14 +11,12 @@ import java.util.Date;
 public class RequestQueueSingleton {
         private static RequestQueueSingleton mInstance;
         private RequestQueue mRequestQueue;
-        private WeatherLoader mWeatherLoader;
         private ScheduleLoader mScheduleLoader;
         private static Context mCtx;
 
         private RequestQueueSingleton(Context context) {
             mCtx = context;
             mRequestQueue = getRequestQueue();
-            mWeatherLoader = new WeatherLoader(context);
             mScheduleLoader = new ScheduleLoader(context);
         }
 
@@ -45,11 +43,6 @@ public class RequestQueueSingleton {
             addToRequestQueue(request);
         }
 
-        public void loadForecast(){
-            CustomRequest request = mWeatherLoader.getForecastRequest();
-            addToRequestQueue(request);
-
-        }
 
         public void stopQueue() {
             getRequestQueue().stop();

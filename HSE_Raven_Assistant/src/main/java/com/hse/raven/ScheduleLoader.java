@@ -39,7 +39,6 @@ public class ScheduleLoader {
     public ScheduleLoader(Context context) {
         mCntx = context;
         speaker = TextSpeaker.getInstance(context);
-        mCntx.getResources().getValue();
        groupID = new HashMap<>();
        groupID.put("17ПИ", "6929");
        groupID.put("16ПИ", "7290");
